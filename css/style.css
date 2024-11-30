@@ -1,0 +1,94 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: monospace;
+    background: white;
+    color: black;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+nav {
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+
+.main-content {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.typewriter {
+    font-size: 1.2rem;
+    font-family: monospace;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    margin: 0;
+    z-index: 10;
+    white-space: nowrap;
+}
+
+.cursor {
+    display: inline-block;
+    width: 0.6em;
+    height: 1.2em;
+    background-color: black;
+    margin-left: 1px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation: flash 1s step-end infinite;
+}
+
+@keyframes flash {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.dot-matrix {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    opacity: 1;
+    background: transparent;
+    font-family: monospace;
+    line-height: 1;
+    white-space: pre;
+    color: black;
+    z-index: 5;
+}
+
+.dot-matrix div > div {
+    opacity: 0;
+    transition: opacity 0.1s;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    text-align: right;
+    font-size: 0.8rem;
+    padding: 1rem;
+    z-index: 100;
+}
+
+footer div {
+    margin-top: 0.5rem;
+}
