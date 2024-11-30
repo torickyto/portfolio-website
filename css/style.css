@@ -28,9 +28,15 @@ nav {
 }
 
 .main-content {
+    opacity: 0;
+    transition: opacity 0.8s ease;
     flex: 1;
     position: relative;
     overflow: hidden;
+}
+
+.main-content.visible {
+    opacity: 1;
 }
 
 .typewriter {
@@ -91,4 +97,39 @@ footer {
 
 footer div {
     margin-top: 0.5rem;
+}
+
+
+/* Loader styles */
+.loader-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: white;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translateX(0);
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.loader-container.slide-out {
+    transform: translateX(-100%);
+}
+
+.loader {
+    width: 48px;
+    height: 48px;
+    border: 5px solid #000;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }

@@ -1,0 +1,71 @@
+.typewriter-container {
+    position: relative;
+    display: inline-block;
+}
+
+.typewriter-text {
+    display: inline-block;
+    white-space: pre;
+}
+
+.typewriter-char {
+    display: inline-block;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.typewriter-char.show {
+    opacity: 1;
+    visibility: visible;
+    animation: typeIn 0.1s steps(1);
+}
+
+.typewriter-char.hide {
+    opacity: 0;
+    visibility: hidden;
+    animation: typeOut 0.1s steps(1);
+}
+
+.cursor {
+    position: absolute;
+    width: 0.6em;
+    height: 1.2em;
+    background: black;
+    top: 0;
+    animation: blink 1s steps(1) infinite;
+}
+
+@keyframes typeIn {
+    0% { 
+        opacity: 0;
+        visibility: hidden;
+    }
+    50% {
+        opacity: 1;
+        visibility: visible;
+    }
+    100% {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+@keyframes typeOut {
+    0% { 
+        opacity: 1;
+        visibility: visible;
+    }
+    50% {
+        opacity: 0;
+        visibility: hidden;
+    }
+    100% {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
