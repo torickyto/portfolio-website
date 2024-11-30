@@ -1,4 +1,3 @@
-// typewriter.js
 class TypeWriter {
     constructor() {
         this.element = document.querySelector('.typewriter');
@@ -7,6 +6,7 @@ class TypeWriter {
         this.lastCharTime = 0;
         this.deleteSpeed = 30;
         this.typeSpeed = 40;
+        this.currentAnimation = null;
         
         this.init();
     }
@@ -24,6 +24,23 @@ class TypeWriter {
         this.element.appendChild(this.cursor);
         
         this.updateCursorPosition();
+
+        // click handler for logo
+        const logo = document.querySelector('.logo');
+        if (logo) {
+            logo.addEventListener('click', async () => {
+                // if currently animating, return early
+                if (this.isAnimating) return;
+                
+                await this.resetToDefault();
+                // close open project descriptions
+                document.querySelectorAll('.project-button.active').forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.nextElementSibling.style.display = 'none';
+                });
+            });
+            logo.style.cursor = 'pointer';
+        }
     }
 
     updateCursorPosition() {
@@ -57,37 +74,49 @@ class TypeWriter {
 
                 if ((isDeleting && currentText.length > 0) || 
                     (!isDeleting && currentText.length < newText.length)) {
-                    requestAnimationFrame(animate);
+                    this.currentAnimation = requestAnimationFrame(animate);
                 } else {
+                    this.currentAnimation = null;
                     resolve();
                 }
             };
 
             this.lastCharTime = startTime;
-            requestAnimationFrame(animate);
+            if (this.currentAnimation) {
+                cancelAnimationFrame(this.currentAnimation);
+            }
+            this.currentAnimation = requestAnimationFrame(animate);
         });
     }
 
     async changeTo(newText) {
         if (this.isAnimating) return;
+        if (this.textContainer.textContent === newText) return;
+
         this.isAnimating = true;
+        window.animationState.isPaused = true;
 
         try {
-            // pause dot matrix
-            window.animationState.isPaused = true;
-
             await this.typeText('', true);
             await new Promise(resolve => setTimeout(resolve, 150));
             await this.typeText(newText);
         } finally {
             this.isAnimating = false;
-            // resume dot matrix
             window.animationState.isPaused = false;
+            // check for matrix animation
+            window.checkMatrixAnimation?.();
         }
     }
 
     async resetToDefault() {
+        if (this.textContainer.textContent === this.defaultText || this.isAnimating) return;
+        
         await this.changeTo(this.defaultText);
+    }
+
+    // check if currently animating
+    isCurrentlyAnimating() {
+        return this.isAnimating;
     }
 }
 

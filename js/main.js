@@ -1,4 +1,31 @@
+
+
 document.addEventListener('DOMContentLoaded', () => {
+
+    const themeToggle = document.createElement('button');
+    themeToggle.textContent = '◑'; 
+    themeToggle.className = 'theme-toggle';
+
+document.querySelector('nav').appendChild(themeToggle);
+
+themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+});
+
+        const logo = document.querySelector('.logo');
+        
+        logo.addEventListener('click', async () => {
+            await typewriter.resetToDefault();
+            
+            // close open project descriptions
+            document.querySelectorAll('.project-button.active').forEach(btn => {
+                btn.classList.remove('active');
+                btn.nextElementSibling.style.display = 'none';
+            });
+        });
+        
+        logo.style.cursor = 'pointer';
+
     const loaderContainer = document.createElement('div');
     loaderContainer.className = 'loader-container';
     

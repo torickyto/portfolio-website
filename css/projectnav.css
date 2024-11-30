@@ -1,4 +1,3 @@
-/* projectnav.css */
 .project-nav {
     position: fixed;
     left: .5rem;
@@ -38,7 +37,7 @@
 
 .description-container {
     position: fixed;
-    top: 4rem;  /* Adjust based on your header position */
+    top: 4rem;  
     left: 50%;
     transform: translateX(-50%);
     padding: 1rem;

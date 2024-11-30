@@ -1,6 +1,9 @@
 import { typewriter } from './typewriter.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+    let lastClickTime = 0;
+    const COOLDOWN_PERIOD = 1000; // click cooldown
+
     const projects = [
         {
             id: 'village-tech',
@@ -33,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
         button.className = 'project-button';
         button.textContent = project.title;
         button.dataset.projectId = project.id;
+        button.dataset.isClickable = 'true';  
 
         const descriptionContainer = document.createElement('div');
         descriptionContainer.className = 'description-container';
@@ -46,6 +50,25 @@ document.addEventListener('DOMContentLoaded', () => {
         projectNav.appendChild(projectContainer);
 
         button.addEventListener('click', async () => {
+            const currentTime = Date.now();
+            
+            // check if button is clickable
+            if (button.dataset.isClickable !== 'true' || 
+                currentTime - lastClickTime < COOLDOWN_PERIOD) {
+                return;
+            }
+
+            // if typewriter is animating, ignore click
+            if (typewriter.isCurrentlyAnimating()) {
+                return;
+            }
+
+            // update last click time
+            lastClickTime = currentTime;
+            
+            // disable the button temporarily
+            button.dataset.isClickable = 'false';
+
             const isActive = button.classList.contains('active');
             
             // close all other projects
@@ -57,14 +80,19 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (!isActive) {
-                await typewriter.changeTo(project.title);
                 button.classList.add('active');
                 descriptionContainer.style.display = 'block';
+                await typewriter.changeTo(project.title);
             } else {
-                await typewriter.resetToDefault();
                 button.classList.remove('active');
                 descriptionContainer.style.display = 'none';
+                await typewriter.resetToDefault();
             }
+
+            // re-enable the button after cooldown
+            setTimeout(() => {
+                button.dataset.isClickable = 'true';
+            }, COOLDOWN_PERIOD);
         });
     });
 
