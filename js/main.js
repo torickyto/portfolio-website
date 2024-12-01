@@ -114,19 +114,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // initialize everything after loading
     async function initializeAfterLoading() {
         const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
+        //create context with willReadFrequently flag
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
         
-        // pre-render all matrices
+        // rest of the function remains the same
         await Promise.all(dotMatrixImages.map(src => preRenderMatrix(src, canvas, ctx)));
-
-        // initialize website with cached matrices
         initializeWebsite();
-
-        // show content
         mainContent.style.opacity = '1';
         mainContent.classList.add('visible');
-
-        // slideout loader
         setTimeout(() => {
             loaderContainer.classList.add('slide-out');
             setTimeout(() => loaderContainer.remove(), 1000);

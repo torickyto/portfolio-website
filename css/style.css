@@ -230,3 +230,61 @@ body.dark-mode {
 .theme-toggle {
     color: #222323;
 }
+
+
+
+
+/* MOBILE */
+
+/* footer */
+@media screen and (max-width: 768px) {
+    footer {
+        display: none; /
+    }
+    
+    .main-content {
+        padding: 1rem;
+    }
+}
+
+/* project nav */
+@media screen and (max-width: 768px) {
+    .project-nav {
+        left: 0;
+        top: 25%;
+        gap: 9rem !important;
+    }
+
+    .project-nav .project-button {
+        font-size: 0.75rem;
+        padding: 0.3rem;
+    }
+
+    /* description container  */
+    .project-nav .description-container {
+        top: 4rem;
+        width: 90%;
+        padding: 0.5rem;
+    }
+}
+
+/* header  */
+@media screen and (max-width: 768px) {
+    nav {
+        padding: 0.5rem;
+    }
+
+    .logo {
+        font-size: 1.2rem; 
+    }
+
+    .nav-links {
+        gap: 1rem;
+    }
+
+    .typewriter {
+        font-size: 1.5rem;
+        top: 15px;
+        left: 15px;
+    }
+}
