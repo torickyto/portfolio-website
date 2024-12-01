@@ -12,9 +12,17 @@ body {
 }
 
 nav {
-    padding: 1rem;
+    padding:.5rem;
     display: flex;
     justify-content: space-between;
+}
+
+nav {
+    border-bottom: 1.5px solid rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode nav {
+    border-bottom: 1.5px solid rgba(255, 255, 255, 0.1);
 }
 
 .logo {
@@ -25,6 +33,7 @@ nav {
 .nav-links {
     display: flex;
     gap: 2rem;
+    padding-top: .66rem;
 }
 
 .main-content {
@@ -176,7 +185,6 @@ footer div {
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
-    padding: 0.5rem;
     transition: transform 0.3s ease;
 }
 
