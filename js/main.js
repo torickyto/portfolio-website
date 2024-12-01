@@ -1,9 +1,55 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // initialize loading state tracker
+    window.isLoading = false;
+
+    // function to handle visibility change
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && !window.isLoading) {
+            resetAndReload();
+        }
+    });
+
     // pre-render matrices for each image
     const dotMatrixCache = new Map();
     let currentMatrix = null;
     const brightnessSymbols = ['#', '$', '!', ':', ';', '"', '\'', '~', ' '];
     
+    // function to reset and reload the app
+    function resetAndReload() {
+        window.isLoading = true;
+        
+        // clean up existing animations
+        if (window.cleanupWebsite) {
+            window.cleanupWebsite();
+        }
+        
+        // clear all existing matrices
+        const allMatrices = document.querySelectorAll('.dot-matrix');
+        allMatrices.forEach(matrix => matrix.remove());
+        
+        currentMatrix = null;
+        
+        // create new loader
+        const loaderContainer = document.createElement('div');
+        loaderContainer.className = 'loader-container';
+        
+        const loader = document.createElement('div');
+        loader.className = 'loader';
+        
+        loaderContainer.appendChild(loader);
+        document.body.appendChild(loaderContainer);
+
+        // reset main content opacity
+        const mainContent = document.querySelector('.main-content');
+        mainContent.style.opacity = '0';
+
+        // reinitialize everything
+        initializeAfterLoading().then(() => {
+            window.isLoading = false;
+        }).catch(console.error);
+    }
+
+    // Create initial loader
     const loaderContainer = document.createElement('div');
     loaderContainer.className = 'loader-container';
     
@@ -111,49 +157,56 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // initialize everything after loading
-    async function initializeAfterLoading() {
-        const canvas = document.createElement('canvas');
-        //create context with willReadFrequently flag
-        const ctx = canvas.getContext('2d', { willReadFrequently: true });
-        
-        // rest of the function remains the same
-        await Promise.all(dotMatrixImages.map(src => preRenderMatrix(src, canvas, ctx)));
-        initializeWebsite();
-        mainContent.style.opacity = '1';
-        mainContent.classList.add('visible');
-        setTimeout(() => {
-            loaderContainer.classList.add('slide-out');
-            setTimeout(() => loaderContainer.remove(), 1000);
-        }, 500);
-    }
-
     function initializeWebsite() {
         window.animationState = { isPaused: false };
         let currentImageIndex = 0;
+        let nextMatrixTimeout = null; 
 
-        function showNextMatrix() {
+        async function showNextMatrix() {
             if (window.animationState.isPaused) {
-                setTimeout(showNextMatrix, 100);
+                nextMatrixTimeout = setTimeout(showNextMatrix, 100);
                 return;
             }
 
             const nextImage = dotMatrixImages[currentImageIndex];
             const nextMatrix = dotMatrixCache.get(nextImage).cloneNode(true);
             
+            // clean up old matrix
             if (currentMatrix) {
-                fadeOutMatrix(currentMatrix);
+                await new Promise(resolve => {
+                    fadeOutMatrix(currentMatrix, resolve);
+                });
+                currentMatrix.remove(); 
             }
+
+            // clear any remaining elements
+            const oldMatrices = mainContent.querySelectorAll('.dot-matrix');
+            oldMatrices.forEach(matrix => matrix.remove());
 
             mainContent.appendChild(nextMatrix);
             fadeInMatrix(nextMatrix);
             currentMatrix = nextMatrix;
 
             currentImageIndex = (currentImageIndex + 1) % dotMatrixImages.length;
-            setTimeout(showNextMatrix, 3000);
+            
+            // clear previous timeout before setting new one
+            if (nextMatrixTimeout) {
+                clearTimeout(nextMatrixTimeout);
+            }
+            nextMatrixTimeout = setTimeout(showNextMatrix, 3000);
         }
 
         showNextMatrix();
+
+        // return cleanup function
+        return () => {
+            if (nextMatrixTimeout) {
+                clearTimeout(nextMatrixTimeout);
+            }
+            if (currentMatrix) {
+                currentMatrix.remove();
+            }
+        };
     }
 
     function fadeInMatrix(matrix) {
@@ -169,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function fadeOutMatrix(matrix) {
+    function fadeOutMatrix(matrix, callback) {
         const chars = Array.from(matrix.querySelectorAll('div > div'));
         const shuffledChars = chars.sort(() => Math.random() - 0.5);
         
@@ -181,9 +234,43 @@ document.addEventListener('DOMContentLoaded', () => {
             }, i * 1);
         });
 
-        setTimeout(() => matrix.remove(), chars.length + 1000);
+        // callback after animation completes
+        setTimeout(() => {
+            callback?.();
+        }, chars.length + 100);
     }
 
-    // start sequence
-    initializeAfterLoading().catch(console.error);
+    // initialize everything after loading
+    async function initializeAfterLoading() {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        
+        // clear existing cache
+        dotMatrixCache.clear();
+        
+        // pre-render all matrices
+        await Promise.all(dotMatrixImages.map(src => preRenderMatrix(src, canvas, ctx)));
+
+        // store cleanup function
+        window.cleanupWebsite = initializeWebsite();
+
+        // show content
+        mainContent.style.opacity = '1';
+        mainContent.classList.add('visible');
+
+        // slideout loader
+        const loaderContainer = document.querySelector('.loader-container');
+        if (loaderContainer) {
+            setTimeout(() => {
+                loaderContainer.classList.add('slide-out');
+                setTimeout(() => loaderContainer.remove(), 1000);
+            }, 500);
+        }
+    }
+
+    // initialize the first time
+    window.isLoading = true;
+    initializeAfterLoading().then(() => {
+        window.isLoading = false;
+    }).catch(console.error);
 });
