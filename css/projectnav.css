@@ -43,12 +43,6 @@
     padding: 1rem;
     width: 80%;
     max-width: 800px;
-    animation: scanlines 1s linear infinite;
-}
-
-.description-container.active {
-    opacity: 1;
-    animation: scanEffect 0.5s linear forwards, scanlines 1s linear infinite;
 }
 
 .project-description {
@@ -58,37 +52,6 @@
     margin-top: 1rem;
 }
 
-@keyframes scanEffect {
-    0% {
-        clip-path: inset(100% 0 0 0);
-        opacity: 0;
-    }
-    100% {
-        clip-path: inset(0 0 0 0);
-        opacity: 1;
-    }
-}
-
-@keyframes scanlines {
-    0% {
-        background: linear-gradient(
-            to bottom,
-            transparent 50%,
-            rgba(128, 128, 128, 0.02) 50%
-        );
-        background-size: 100% 4px;
-        background-position: 0 0;
-    }
-    100% {
-        background: linear-gradient(
-            to bottom,
-            transparent 50%,
-            rgba(128, 128, 128, 0.02) 50%
-        );
-        background-size: 100% 4px;
-        background-position: 0 4px;
-    }
-}
 
 
 
