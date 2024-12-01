@@ -82,10 +82,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!isActive) {
                 button.classList.add('active');
                 descriptionContainer.style.display = 'block';
+                setTimeout(() => {
+                    descriptionContainer.classList.add('active');
+                }, 10);
                 await typewriter.changeTo(project.title);
             } else {
                 button.classList.remove('active');
-                descriptionContainer.style.display = 'none';
+                descriptionContainer.classList.remove('active');
+                setTimeout(() => {
+                    descriptionContainer.style.display = 'none';
+                }, 500);
                 await typewriter.resetToDefault();
             }
 
